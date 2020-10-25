@@ -38,3 +38,9 @@ sysinfo.txt
 # Rider
 .idea/
 
+Assets/Plugins/Demigiant.meta
+Assets/Plugins/Demigiant/*
+Assets/Plugins.meta
+Assets/Resources.meta
+Assets/Resources/DOTweenSettings.asset
+Assets/Resources/DOTweenSettings.asset.meta
