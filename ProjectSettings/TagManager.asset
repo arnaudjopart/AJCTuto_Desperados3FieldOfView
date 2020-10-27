@@ -15,8 +15,8 @@ TagManager:
   - 
   - PrimaryFOV
   - SecondaryFOV
-  - 
-  - 
+  - FullCoverMask
+  - SemiCoverMask
   - 
   - 
   - 
