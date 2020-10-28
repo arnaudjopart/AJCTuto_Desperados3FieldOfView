@@ -91,11 +91,11 @@ MonoBehaviour:
   m_Name: Tuto_RenderPipeline_Renderer
   m_EditorClassIdentifier: 
   m_RendererFeatures:
-  - {fileID: -4899382435767259085}
   - {fileID: 8039657761828117574}
+  - {fileID: -4899382435767259085}
   - {fileID: 1469384414028895440}
   - {fileID: -7627605774057910675}
-  m_RendererFeatureMap: 33f04df9a1e501bc461c7a71239a926fd014b0e4564d64146d4e8f16f64c2596
+  m_RendererFeatureMap: 461c7a71239a926f33f04df9a1e501bcd014b0e4564d64146d4e8f16f64c2596
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   shaders:
     blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
