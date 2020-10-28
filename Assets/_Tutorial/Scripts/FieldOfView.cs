@@ -26,6 +26,7 @@ public class FieldOfView : MonoBehaviour
             var endPointDirection =
                 Quaternion.Euler(0, (-_totalAngleOfView * .5f) + (i * step), 0)
                 *Quaternion.Euler(0,_currentRotationAngle,0)
+                *Quaternion.Inverse(Quaternion.LookRotation(transform.forward))
                 * transform.forward;
             endPoints[i] = endPointDirection * _distance;
         }
