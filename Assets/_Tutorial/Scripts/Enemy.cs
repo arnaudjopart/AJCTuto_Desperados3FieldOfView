@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
@@ -19,7 +20,17 @@ public class Enemy : MonoBehaviour
     public float m_tweenDuration = 5f;
 
     private float m_currentRotationAngle;
+
+    private CoverSystem m_coverSystem;
+
+    private CoverMeshDrawer m_coverMeshDrawer;
     // Start is called before the first frame update
+    private void Awake()
+    {
+        m_coverSystem = GetComponent<CoverSystem>();
+        m_coverMeshDrawer = GetComponent<CoverMeshDrawer>();
+    }
+
     void Start()
     {
         m_currentRotationAngle = -m_totalRotationAngle * .5f;
@@ -34,5 +45,20 @@ public class Enemy : MonoBehaviour
     {
         m_primaryFieldOfView.DrawFieldOfView(m_totalViewAngleInDegree,m_primaryFieldOfViewDistance, m_currentRotationAngle);
         m_secondaryFieldOfView.DrawFieldOfView(m_totalViewAngleInDegree,m_secondaryFieldOfViewDistance,m_currentRotationAngle);
+
+        var fullCoverMeshData = m_coverSystem.generateMaskMeshData(MaskMeshData.CoverType.FULL, m_totalViewAngleInDegree,
+            m_secondaryFieldOfViewDistance, m_currentRotationAngle);
+        
+        var semiCoverMeshData = m_coverSystem.generateMaskMeshData(MaskMeshData.CoverType.SEMI, 
+        m_totalViewAngleInDegree,
+            m_secondaryFieldOfViewDistance, m_currentRotationAngle);
+
+
+        var coverData = new List<MaskMeshData>();
+        coverData.AddRange(semiCoverMeshData);
+        coverData.AddRange(fullCoverMeshData);
+        
+        
+        m_coverMeshDrawer.DrawMesh(coverData);
     }
 }

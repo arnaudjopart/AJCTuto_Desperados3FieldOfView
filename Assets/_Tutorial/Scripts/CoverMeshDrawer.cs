@@ -40,7 +40,34 @@ public class CoverMeshDrawer : MonoBehaviour
 
         var nbOfVertices = nbOfTrianles * 3;
         var vertices = new Vector3[nbOfVertices];
+
+        for (var i = 0; i < _maskMeshData.m_data.Count - 1; i++)
+        {
+            vertices[i * 6] = transform.InverseTransformPoint(_maskMeshData.m_data[i].m_startPoint);
+            vertices[i * 6+1] = transform.InverseTransformPoint(_maskMeshData.m_data[i].m_endPoint);
+            vertices[i * 6+2] = transform.InverseTransformPoint(_maskMeshData.m_data[i+1].m_startPoint);
+            vertices[i * 6+3] = transform.InverseTransformPoint(_maskMeshData.m_data[i].m_endPoint);
+            vertices[i * 6+4] = transform.InverseTransformPoint(_maskMeshData.m_data[i+1].m_endPoint);
+            vertices[i * 6+5] = transform.InverseTransformPoint(_maskMeshData.m_data[i+1].m_startPoint);
+        }
+
+        var triangles = new int[nbOfTrianles * 3];
+
+        for (var i = 0; i < triangles.Length; i++)
+        {
+            triangles[i] = i;
+        }
         
+        var uvs = new Vector2[nbOfVertices];
+
+        for (var i = 0; i < uvs.Length; i++)
+        {
+            uvs[i] = new Vector2(0,0);
+        }
+
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.uv = uvs;
         
         return mesh;
 
