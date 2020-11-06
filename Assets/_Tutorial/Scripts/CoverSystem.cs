@@ -12,7 +12,8 @@ public class CoverSystem : MonoBehaviour
 
     public LayerMask m_fullCoverLayerMask;
     public LayerMask m_semiCoverLayerMask;
-    
+
+    public int m_levelOfPrecision=10;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,6 +61,18 @@ public class CoverSystem : MonoBehaviour
                 {
                     if (currentMaskMeshData.m_data.Count > 0)
                     {
+                        var possibleBetterEdge = FindClosingEdge(
+                            angle,
+                            raycastAngleStep,
+                            _length,
+                            _currentRotation,
+                            raycastLayerMask);
+                        
+                        if (possibleBetterEdge.m_hasHitObstacle)
+                        {
+                            currentMaskMeshData.m_data.Add(possibleBetterEdge);
+                        }
+                        
                         result.Add(currentMaskMeshData);
                     }
                 }
@@ -83,12 +96,106 @@ public class CoverSystem : MonoBehaviour
             else
             {
                 currentMaskMeshData = new MaskMeshData(_coverType);
+                
+                
+                var possibleBetterEdge = FindEnteringEdge(
+                    angle,
+                    raycastAngleStep,
+                    _length,
+                    _currentRotation,
+                    raycastLayerMask);
+
+                if (possibleBetterEdge.m_hasHitObstacle)
+                {
+                    currentMaskMeshData.m_data.Add(possibleBetterEdge);
+                }
+                
                 currentMaskMeshData.m_data.Add(currentRaycastResult);
+
+                if (i == m_numberOfRaycast - 1)
+                {
+                    result.Add(currentMaskMeshData);
+                }
+
             }
 
             m_previousRaycastResult = currentRaycastResult;
 
         }
+        return result;
+    }
+
+    private RaycastResult FindClosingEdge(float _startAngle, float _angle,float _length, float _currentRotation, 
+    LayerMask _layerMask)
+    {
+        var result = new RaycastResult();
+        
+        var progression=0f;
+        
+        var hasFoundBetterEdge = false;
+        
+        for (var i = 0; i < m_levelOfPrecision; i++)
+        {
+            var directionOfMove = hasFoundBetterEdge ? 1 : -1;
+            progression += directionOfMove / (Mathf.Pow(2, i+1));
+            var currentAngle = _startAngle + _angle * progression;
+            
+            var raycastDirection = Quaternion.Euler(0, currentAngle, 0)
+                                   * Quaternion.Euler(0, _currentRotation, 0)
+                                   * transform.forward;
+            var ray = new Ray(transform.position, raycastDirection);
+
+            if (Physics.Raycast(ray, out var hit, _length, _layerMask))
+            {
+                hasFoundBetterEdge = true;
+                result.m_hasHitObstacle = true;
+                result.m_startPoint = hit.point;
+                result.m_endPoint = ray.GetPoint(_length);
+            }
+            else
+            {
+                hasFoundBetterEdge = false;
+            }
+            
+        }
+        
+        return result;
+    }
+    
+    private RaycastResult FindEnteringEdge(float _startAngle, float _angle,float _length, float _currentRotation, 
+        LayerMask _layerMask)
+    {
+        var result = new RaycastResult();
+        
+        var progression=0f;
+        
+        var hasFoundBetterEdge = true;
+        
+        for (var i = 0; i < m_levelOfPrecision; i++)
+        {
+            var directionOfMove = hasFoundBetterEdge ? -1 : 1;
+            progression += directionOfMove / (Mathf.Pow(2, i+1));
+            var currentAngle = _startAngle + _angle * progression;
+            
+            var raycastDirection = Quaternion.Euler(0, currentAngle, 0)
+                                   * Quaternion.Euler(0, _currentRotation, 0)
+                                   * transform.forward;
+            var ray = new Ray(transform.position, raycastDirection);
+
+            if (Physics.Raycast(ray, out var hit, _length, _layerMask))
+            {
+                hasFoundBetterEdge = true;
+                result.m_hasHitObstacle = true;
+                result.m_startPoint = hit.point;
+                result.m_endPoint = ray.GetPoint(_length);
+            }
+            else
+            {
+                hasFoundBetterEdge = false;
+            }
+            
+        }
+        
         return result;
     }
 }
