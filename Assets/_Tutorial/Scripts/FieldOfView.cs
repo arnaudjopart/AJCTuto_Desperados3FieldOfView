@@ -9,6 +9,7 @@ using UnityEngine;
 public class FieldOfView : MonoBehaviour
 {
 
+    [Range(1,20)]
     public int m_nbOfTriangles = 10;
 
     private MeshFilter m_meshFilter;
@@ -20,35 +21,30 @@ public class FieldOfView : MonoBehaviour
 
     public void DrawFieldOfView(float _totalAngleOfView, float _distance, float _currentRotationAngle)
     {
-        m_nbOfTriangles = Mathf.Max(1, m_nbOfTriangles);
-        var endPoints = new Vector3[m_nbOfTriangles + 1];
-        var step = m_nbOfTriangles == 1 ? _totalAngleOfView : _totalAngleOfView / m_nbOfTriangles;
-
-        for (var i = 0; i < endPoints.Length; i++)
-        {
-            var endPointDirection =
-                Quaternion.Euler(0, (-_totalAngleOfView * .5f) + (i * step), 0)
-                * Quaternion.Euler(0, _currentRotationAngle, 0)
-                * Vector3.forward;
-            endPoints[i] = endPointDirection * _distance;
-        }
+        var nbOfVertices = m_nbOfTriangles + 2;
         
         var mesh = new Mesh();
 
-        var nbOfVertices = m_nbOfTriangles + 2;
         var vertices = new Vector3[nbOfVertices];
-        vertices[0]=Vector3.zero;
-        
         var uvs = new Vector2[nbOfVertices];
+        var triangles = new int[m_nbOfTriangles * 3];
+        
+        vertices[0] = Vector3.zero;
         uvs[0] = Vector2.zero;
+        
+        var step = _totalAngleOfView / m_nbOfTriangles;
 
         for (var i = 1; i < vertices.Length; i++)
         {
-            vertices[i] = endPoints[i - 1];
+            var direction =
+                Quaternion.Euler(0, (-_totalAngleOfView * .5f) + (i * step), 0)
+                * Quaternion.Euler(0, _currentRotationAngle, 0)
+                * Vector3.forward;
+            
+            vertices[i] = direction * _distance;
             uvs[i] = new Vector2(1,0);
         }
-
-        var triangles = new int[m_nbOfTriangles * 3];
+        
         for (var i = 0; i < triangles.Length; i += 3)
         {
             triangles[i] = 0;
