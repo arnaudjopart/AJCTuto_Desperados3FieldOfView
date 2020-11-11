@@ -20,7 +20,7 @@ public class CoverSystem : MonoBehaviour
         m_previousRaycastResult = new RaycastResult();
     }
 
-    public List<MaskMeshData> generateMaskMeshData(MaskMeshData.CoverType _coverType, float _totalAngle, float
+    public List<MaskMeshData> GenerateMaskMeshData(MaskMeshData.CoverType _coverType, float _totalAngle, float
         _length, float _currentRotation)
     {
         var result = new List<MaskMeshData>();
