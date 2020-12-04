@@ -10,6 +10,7 @@ public class CoverSystem : MonoBehaviour
     public LayerMask m_fullCoverLayerMask;
     public LayerMask m_semiCoverLayerMask;
 
+    [HideInInspector]
     public int m_levelOfPrecision = 10;
 
     public List<MeshData> GenerateMaskMeshData(MeshData.CoverType _coverType, float _fovTotalAngle, float _fovLength, float _currentRotation)
@@ -52,6 +53,7 @@ public class CoverSystem : MonoBehaviour
 
                 if (previousRaycastResult.m_hasHitObstacle)
                 {
+                    /*
                     var possibleBetterEdge = FindClosingEdge(
                         currentRaycastAngle,
                         raycastAngleStep,
@@ -62,7 +64,7 @@ public class CoverSystem : MonoBehaviour
                     if (possibleBetterEdge.m_hasHitObstacle)
                     {
                         currentMeshData.m_data.Add(possibleBetterEdge);
-                    }
+                    }*/
                         
                     listOfMeshToDraw.Add(currentMeshData);
                 }
@@ -86,7 +88,7 @@ public class CoverSystem : MonoBehaviour
             else
             {
                 currentMeshData = new MeshData(_coverType);
-                
+                /*
                 var possibleBetterEdge = FindEnteringEdge(
                     currentRaycastAngle,
                     raycastAngleStep,
@@ -98,7 +100,7 @@ public class CoverSystem : MonoBehaviour
                 {
                     currentMeshData.m_data.Add(possibleBetterEdge);
                 }
-                
+                */
                 currentMeshData.m_data.Add(currentRaycastResult);
 
                 if (i == m_numberOfRaycast - 1)

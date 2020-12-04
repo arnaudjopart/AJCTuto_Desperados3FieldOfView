@@ -7,19 +7,20 @@ public class CoverMeshDrawer : MonoBehaviour
 
     public MeshFilter[] m_meshFilters;
 
-    public void DrawMesh(List<MeshData> _maskMeshDataCollection)
+    public void DrawMesh(List<MeshData> _ListOfMeshData)
     {
-        var nbOfMeshToDraw = _maskMeshDataCollection.Count;
+        var nbOfMeshToDraw = _ListOfMeshData.Count;
 
         for (var i = 0; i < nbOfMeshToDraw; i++)
         {
-            var mesh = DrawMeshFromData(_maskMeshDataCollection[i]);
+            var mesh = DrawMeshFromData(_ListOfMeshData[i]);
             m_meshFilters[i].mesh = mesh;
-            if (_maskMeshDataCollection[i].m_coverType == MeshData.CoverType.FULL)
+            
+            if (_ListOfMeshData[i].m_coverType == MeshData.CoverType.FULL)
             {
                 m_meshFilters[i].gameObject.layer = 10;
             }
-            if (_maskMeshDataCollection[i].m_coverType == MeshData.CoverType.SEMI)
+            if (_ListOfMeshData[i].m_coverType == MeshData.CoverType.SEMI)
             {
                 m_meshFilters[i].gameObject.layer = 11;
             }
@@ -36,6 +37,7 @@ public class CoverMeshDrawer : MonoBehaviour
         var mesh = new Mesh();
 
         if (_meshData.m_data.Count < 2) return null;
+        
         var nbOfTrianles = (_meshData.m_data.Count - 1) * 2;
 
         var nbOfVertices = nbOfTrianles * 3;
@@ -70,17 +72,5 @@ public class CoverMeshDrawer : MonoBehaviour
         mesh.uv = uvs;
         
         return mesh;
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

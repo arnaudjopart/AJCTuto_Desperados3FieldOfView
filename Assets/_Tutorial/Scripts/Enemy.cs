@@ -22,9 +22,8 @@ public class Enemy : MonoBehaviour
     private float m_currentRotationAngle;
 
     private CoverSystem m_coverSystem;
-
     private CoverMeshDrawer m_coverMeshDrawer;
-    // Start is called before the first frame update
+
     private void Awake()
     {
         m_coverSystem = GetComponent<CoverSystem>();
@@ -50,14 +49,11 @@ public class Enemy : MonoBehaviour
             m_secondaryFieldOfViewDistance, m_currentRotationAngle);
         
         var semiCoverMeshData = m_coverSystem.GenerateMaskMeshData(MeshData.CoverType.SEMI, 
-        m_totalViewAngleInDegree,
-            m_secondaryFieldOfViewDistance, m_currentRotationAngle);
-
-
+        m_totalViewAngleInDegree, m_secondaryFieldOfViewDistance, m_currentRotationAngle);
+        
         var coverData = new List<MeshData>();
         coverData.AddRange(semiCoverMeshData);
         coverData.AddRange(fullCoverMeshData);
-        
         
         m_coverMeshDrawer.DrawMesh(coverData);
     }

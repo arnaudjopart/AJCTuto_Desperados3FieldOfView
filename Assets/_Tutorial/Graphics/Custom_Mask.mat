@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: StencilMask
+  m_Name: Custom_Mask
   m_Shader: {fileID: 4800000, guid: e24e91407bcec3a4d8e331002d132fb4, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
