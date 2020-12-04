@@ -7,7 +7,7 @@ public class CoverMeshDrawer : MonoBehaviour
 
     public MeshFilter[] m_meshFilters;
 
-    public void DrawMesh(List<MaskMeshData> _maskMeshDataCollection)
+    public void DrawMesh(List<MeshData> _maskMeshDataCollection)
     {
         var nbOfMeshToDraw = _maskMeshDataCollection.Count;
 
@@ -15,11 +15,11 @@ public class CoverMeshDrawer : MonoBehaviour
         {
             var mesh = DrawMeshFromData(_maskMeshDataCollection[i]);
             m_meshFilters[i].mesh = mesh;
-            if (_maskMeshDataCollection[i].m_coverType == MaskMeshData.CoverType.FULL)
+            if (_maskMeshDataCollection[i].m_coverType == MeshData.CoverType.FULL)
             {
                 m_meshFilters[i].gameObject.layer = 10;
             }
-            if (_maskMeshDataCollection[i].m_coverType == MaskMeshData.CoverType.SEMI)
+            if (_maskMeshDataCollection[i].m_coverType == MeshData.CoverType.SEMI)
             {
                 m_meshFilters[i].gameObject.layer = 11;
             }
@@ -31,24 +31,24 @@ public class CoverMeshDrawer : MonoBehaviour
         }
     }
 
-    private Mesh DrawMeshFromData(MaskMeshData _maskMeshData)
+    private Mesh DrawMeshFromData(MeshData _meshData)
     {
         var mesh = new Mesh();
 
-        if (_maskMeshData.m_data.Count < 2) return null;
-        var nbOfTrianles = (_maskMeshData.m_data.Count - 1) * 2;
+        if (_meshData.m_data.Count < 2) return null;
+        var nbOfTrianles = (_meshData.m_data.Count - 1) * 2;
 
         var nbOfVertices = nbOfTrianles * 3;
         var vertices = new Vector3[nbOfVertices];
 
-        for (var i = 0; i < _maskMeshData.m_data.Count - 1; i++)
+        for (var i = 0; i < _meshData.m_data.Count - 1; i++)
         {
-            vertices[i * 6] = transform.InverseTransformPoint(_maskMeshData.m_data[i].m_startPoint);
-            vertices[i * 6+1] = transform.InverseTransformPoint(_maskMeshData.m_data[i].m_endPoint);
-            vertices[i * 6+2] = transform.InverseTransformPoint(_maskMeshData.m_data[i+1].m_startPoint);
-            vertices[i * 6+3] = transform.InverseTransformPoint(_maskMeshData.m_data[i].m_endPoint);
-            vertices[i * 6+4] = transform.InverseTransformPoint(_maskMeshData.m_data[i+1].m_endPoint);
-            vertices[i * 6+5] = transform.InverseTransformPoint(_maskMeshData.m_data[i+1].m_startPoint);
+            vertices[i * 6] = transform.InverseTransformPoint(_meshData.m_data[i].m_startPoint);
+            vertices[i * 6+1] = transform.InverseTransformPoint(_meshData.m_data[i].m_endPoint);
+            vertices[i * 6+2] = transform.InverseTransformPoint(_meshData.m_data[i+1].m_startPoint);
+            vertices[i * 6+3] = transform.InverseTransformPoint(_meshData.m_data[i].m_endPoint);
+            vertices[i * 6+4] = transform.InverseTransformPoint(_meshData.m_data[i+1].m_endPoint);
+            vertices[i * 6+5] = transform.InverseTransformPoint(_meshData.m_data[i+1].m_startPoint);
         }
 
         var triangles = new int[nbOfTrianles * 3];

@@ -5,124 +5,112 @@ using UnityEngine;
 
 public class CoverSystem : MonoBehaviour
 {
-
     public int m_numberOfRaycast = 15;
-
-    private RaycastResult m_previousRaycastResult;
 
     public LayerMask m_fullCoverLayerMask;
     public LayerMask m_semiCoverLayerMask;
 
-    public int m_levelOfPrecision=10;
-    // Start is called before the first frame update
-    void Start()
-    {
-        m_previousRaycastResult = new RaycastResult();
-    }
+    public int m_levelOfPrecision = 10;
 
-    public List<MaskMeshData> GenerateMaskMeshData(MaskMeshData.CoverType _coverType, float _totalAngle, float
-        _length, float _currentRotation)
+    public List<MeshData> GenerateMaskMeshData(MeshData.CoverType _coverType, float _fovTotalAngle, float _fovLength, float _currentRotation)
     {
-        var result = new List<MaskMeshData>();
+        var previousRaycastResult = new RaycastResult();
+        var listOfMeshToDraw = new List<MeshData>();
 
         LayerMask raycastLayerMask;
 
         switch (_coverType)
         {
-            case MaskMeshData.CoverType.FULL:
+            case MeshData.CoverType.FULL:
                 raycastLayerMask = m_fullCoverLayerMask;
                 break;
-            case MaskMeshData.CoverType.SEMI:
+            case MeshData.CoverType.SEMI:
                 raycastLayerMask = m_semiCoverLayerMask;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(_coverType), _coverType, null);
         }
         
-        var currentMaskMeshData = new MaskMeshData(_coverType);
+        var currentMeshData = new MeshData(_coverType);
 
-        var raycastAngleStep = _totalAngle / (m_numberOfRaycast - 1);
+        var raycastAngleStep = _fovTotalAngle / (m_numberOfRaycast - 1);
 
         for (var i = 0; i < m_numberOfRaycast; i++)
         {
-            var angle = -_totalAngle * .5f + i * raycastAngleStep;
-            var raycastDirection = Quaternion.Euler(0, angle, 0)
+            var currentRaycastAngle = -_fovTotalAngle * .5f + i * raycastAngleStep;
+            var raycastDirection = Quaternion.Euler(0, currentRaycastAngle, 0)
                                    * Quaternion.Euler(0, _currentRotation, 0)
                                    * transform.forward;
+            
             var ray = new Ray(transform.position, raycastDirection);
             
             var currentRaycastResult = new RaycastResult();
 
-            if (!Physics.Raycast(ray, out var hit, _length, raycastLayerMask))
+            if (!Physics.Raycast(ray, out var hit, _fovLength, raycastLayerMask))
             {
                 currentRaycastResult.m_hasHitObstacle = false;
 
-                if (m_previousRaycastResult.m_hasHitObstacle)
+                if (previousRaycastResult.m_hasHitObstacle)
                 {
-                    if (currentMaskMeshData.m_data.Count > 0)
+                    var possibleBetterEdge = FindClosingEdge(
+                        currentRaycastAngle,
+                        raycastAngleStep,
+                        _fovLength,
+                        _currentRotation,
+                        raycastLayerMask);
+                        
+                    if (possibleBetterEdge.m_hasHitObstacle)
                     {
-                        var possibleBetterEdge = FindClosingEdge(
-                            angle,
-                            raycastAngleStep,
-                            _length,
-                            _currentRotation,
-                            raycastLayerMask);
-                        
-                        if (possibleBetterEdge.m_hasHitObstacle)
-                        {
-                            currentMaskMeshData.m_data.Add(possibleBetterEdge);
-                        }
-                        
-                        result.Add(currentMaskMeshData);
+                        currentMeshData.m_data.Add(possibleBetterEdge);
                     }
+                        
+                    listOfMeshToDraw.Add(currentMeshData);
                 }
 
-                m_previousRaycastResult = currentRaycastResult;
+                previousRaycastResult = currentRaycastResult;
                 continue;
             }
 
             currentRaycastResult.m_hasHitObstacle = true;
             currentRaycastResult.m_startPoint = hit.point;
-            currentRaycastResult.m_endPoint = ray.GetPoint(_length);
+            currentRaycastResult.m_endPoint = ray.GetPoint(_fovLength);
 
-            if (m_previousRaycastResult.m_hasHitObstacle)
+            if (previousRaycastResult.m_hasHitObstacle)
             {
-                currentMaskMeshData.m_data.Add(currentRaycastResult);
+                currentMeshData.m_data.Add(currentRaycastResult);
                 if (i == m_numberOfRaycast - 1)
                 {
-                    if(currentMaskMeshData.m_data.Count>0) result.Add(currentMaskMeshData);
+                    if(currentMeshData.m_data.Count>0) listOfMeshToDraw.Add(currentMeshData);
                 }
             }
             else
             {
-                currentMaskMeshData = new MaskMeshData(_coverType);
-                
+                currentMeshData = new MeshData(_coverType);
                 
                 var possibleBetterEdge = FindEnteringEdge(
-                    angle,
+                    currentRaycastAngle,
                     raycastAngleStep,
-                    _length,
+                    _fovLength,
                     _currentRotation,
                     raycastLayerMask);
 
                 if (possibleBetterEdge.m_hasHitObstacle)
                 {
-                    currentMaskMeshData.m_data.Add(possibleBetterEdge);
+                    currentMeshData.m_data.Add(possibleBetterEdge);
                 }
                 
-                currentMaskMeshData.m_data.Add(currentRaycastResult);
+                currentMeshData.m_data.Add(currentRaycastResult);
 
                 if (i == m_numberOfRaycast - 1)
                 {
-                    result.Add(currentMaskMeshData);
+                    listOfMeshToDraw.Add(currentMeshData);
                 }
-
             }
 
-            m_previousRaycastResult = currentRaycastResult;
+            previousRaycastResult = currentRaycastResult;
 
         }
-        return result;
+        return listOfMeshToDraw;
     }
 
     private RaycastResult FindClosingEdge(float _startAngle, float _angle,float _length, float _currentRotation, 
@@ -201,9 +189,9 @@ public class CoverSystem : MonoBehaviour
 }
 
 
-public class MaskMeshData
+public class MeshData
 {
-    public List<RaycastResult> m_data;
+    public readonly List<RaycastResult> m_data;
 
     public enum CoverType
     {
@@ -211,9 +199,9 @@ public class MaskMeshData
         SEMI
     };
 
-    public CoverType m_coverType;
+    public readonly CoverType m_coverType;
 
-    public MaskMeshData(CoverType _type)
+    public MeshData(CoverType _type)
     {
         m_data = new List<RaycastResult>();
         m_coverType = _type;

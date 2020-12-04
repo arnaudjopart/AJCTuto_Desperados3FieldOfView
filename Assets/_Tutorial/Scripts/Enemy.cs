@@ -46,15 +46,15 @@ public class Enemy : MonoBehaviour
         m_primaryFieldOfView.DrawFieldOfView(m_totalViewAngleInDegree,m_primaryFieldOfViewDistance, m_currentRotationAngle);
         m_secondaryFieldOfView.DrawFieldOfView(m_totalViewAngleInDegree,m_secondaryFieldOfViewDistance,m_currentRotationAngle);
 
-        var fullCoverMeshData = m_coverSystem.GenerateMaskMeshData(MaskMeshData.CoverType.FULL, m_totalViewAngleInDegree,
+        var fullCoverMeshData = m_coverSystem.GenerateMaskMeshData(MeshData.CoverType.FULL, m_totalViewAngleInDegree,
             m_secondaryFieldOfViewDistance, m_currentRotationAngle);
         
-        var semiCoverMeshData = m_coverSystem.GenerateMaskMeshData(MaskMeshData.CoverType.SEMI, 
+        var semiCoverMeshData = m_coverSystem.GenerateMaskMeshData(MeshData.CoverType.SEMI, 
         m_totalViewAngleInDegree,
             m_secondaryFieldOfViewDistance, m_currentRotationAngle);
 
 
-        var coverData = new List<MaskMeshData>();
+        var coverData = new List<MeshData>();
         coverData.AddRange(semiCoverMeshData);
         coverData.AddRange(fullCoverMeshData);
         
