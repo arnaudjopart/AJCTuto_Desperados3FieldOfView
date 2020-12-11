@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEditor;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -23,6 +24,14 @@ public class Enemy : MonoBehaviour
 
     private CoverSystem m_coverSystem;
     private CoverMeshDrawer m_coverMeshDrawer;
+
+    public Vector3 LookForwardDirection
+    {
+        get
+        {
+            return Quaternion.Euler(new Vector3( 0, m_currentRotationAngle,0))*transform.forward;
+        }
+    }
 
     private void Awake()
     {
@@ -56,5 +65,16 @@ public class Enemy : MonoBehaviour
         coverData.AddRange(fullCoverMeshData);
         
         m_coverMeshDrawer.DrawMesh(coverData);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+       
+        var p1 = transform.position;
+        var p2 = transform.position+LookForwardDirection*10;
+        var thickness = 5;
+        Handles.DrawBezier(p1,p2,p1,p2, Color.red,null,thickness);
+        
     }
 }
