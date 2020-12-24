@@ -9,8 +9,8 @@ public class LineOfSight : MonoBehaviour
     
     public Player m_player;
     
-    public float m_progressSpeedInUnitPerSecond = .5f;
-    public float m_retreatSpeedInUnitPerSecond = 1f;
+    public float m_progressSpeedInUnitPerSecond = 2f;
+    public float m_retreatSpeedInUnitPerSecond = 3f;
     
     private LineRenderer m_lineRenderer;
     private Material m_lineRendererMaterial;
@@ -26,14 +26,15 @@ public class LineOfSight : MonoBehaviour
     
     void Update()
     {
-        
-        if (!PlayerIsInFieldOfView() || !PlayerIsDetected())
+        if (PlayerIsInFieldOfView())
         {
-            ResetDetection();
-            return;
+            if (PlayerIsDetected())
+            {
+                HandleDetection();
+                return;
+            }
         }
-        
-        HandleDetection();
+        ResetDetection();
     }
     
     private bool PlayerIsInFieldOfView()
@@ -56,7 +57,6 @@ public class LineOfSight : MonoBehaviour
         
         var ray = new Ray(position,fromEnemyToPlayerVector);
         var raycastHits = Physics.RaycastAll(ray, 500, m_layerMask);
-
         if (raycastHits.Length == 0) return false;
 
         var semiCover = false;
@@ -103,12 +103,10 @@ public class LineOfSight : MonoBehaviour
         var progressSpeed = 1 / timeToFill;
         
         var currentProgress = m_lineRendererMaterial.GetFloat("_Progress");
-        
         currentProgress += progressSpeed*Time.deltaTime;
         
         currentProgress = Mathf.Clamp(currentProgress, 0, 1);
         m_lineRendererMaterial.SetFloat("_Progress",currentProgress);
-   
     }
     
     private void ResetDetection()
@@ -122,13 +120,23 @@ public class LineOfSight : MonoBehaviour
         var retreatSpeed = 1 / timeToEmpty;
         
         var currentProgress = m_lineRendererMaterial.GetFloat("_Progress");
-        
         currentProgress -= retreatSpeed*Time.deltaTime;
         
         currentProgress = Mathf.Clamp(currentProgress, 0, 1);
         m_lineRendererMaterial.SetFloat("_Progress",currentProgress);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /*
     private void OnDrawGizmos()
     {
