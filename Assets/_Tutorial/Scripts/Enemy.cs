@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
     private CoverSystem m_coverSystem;
     private CoverMeshDrawer m_coverMeshDrawer;
 
-    public Vector3 LookForwardDirection
+    public Vector3 FieldOfViewForwardDirection
     {
         get
         {
@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
         Gizmos.color = Color.red;
        
         var p1 = transform.position;
-        var p2 = transform.position+LookForwardDirection*10;
+        var p2 = transform.position+FieldOfViewForwardDirection*10;
         var thickness = 5;
         Handles.DrawBezier(p1,p2,p1,p2, Color.red,null,thickness);
         

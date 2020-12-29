@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -42,13 +43,15 @@ public class LineOfSight : MonoBehaviour
         var fromEnemyToPlayerVector = m_player.transform.position - transform.position;
         
         var distanceBetweenEnemyAndPlayer = Vector3.Magnitude(fromEnemyToPlayerVector);
-        var detectionAngle = Vector3.Angle(fromEnemyToPlayerVector, m_enemy.LookForwardDirection);
-        
         var playerIsNear = distanceBetweenEnemyAndPlayer < m_enemy.m_secondaryFieldOfViewDistance;
-        var playerIsInAngle = detectionAngle < m_enemy.m_totalViewAngleInDegree * .5f;
+
+        var angleBetweenEnemyAndPlayer = Vector3.Angle(fromEnemyToPlayerVector, m_enemy.FieldOfViewForwardDirection);
+        var playerIsInAngle = angleBetweenEnemyAndPlayer < m_enemy.m_totalViewAngleInDegree * .5f;
         
         return playerIsNear && playerIsInAngle;
     }
+    
+    
 
     private bool PlayerIsDetected()
     {
@@ -77,8 +80,7 @@ public class LineOfSight : MonoBehaviour
             if (semiCover) return !m_player.isCrouch;
             
             var playerDistance = Vector3.Magnitude(fromEnemyToPlayerVector);
-            if (playerDistance > m_enemy.m_secondaryFieldOfViewDistance) return false;
-            if (playerDistance > m_enemy.m_primaryFieldOfViewDistance) return !m_player.isCrouch;
+            if (playerDistance > m_enemy.m_primaryFieldOfViewDistance) return !m_player.isCrouch; 
             
             return true;
         }
@@ -143,7 +145,7 @@ public class LineOfSight : MonoBehaviour
         var fromEnemyToPlayerVector = m_player.transform.position - transform.position;
         
         var distanceBetweenEnemyAndPlayer = Vector3.Magnitude(fromEnemyToPlayerVector);
-        var detectionAngle = Vector3.Angle(fromEnemyToPlayerVector, m_enemy.LookForwardDirection);
+        var detectionAngle = Vector3.Angle(fromEnemyToPlayerVector, m_enemy.FieldOfViewForwardDirection);
         
         var playerIsNear = distanceBetweenEnemyAndPlayer < m_enemy.m_secondaryFieldOfViewDistance;
         var playerIsInAngle = detectionAngle < m_enemy.m_totalViewAngleInDegree * .5f;
