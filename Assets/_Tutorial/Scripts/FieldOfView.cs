@@ -16,7 +16,7 @@ public class FieldOfView : MonoBehaviour
         m_meshFilter = GetComponent<MeshFilter>();
     }
 
-    public void DrawFieldOfView(float _totalAngleOfView, float _radius)
+    public void DrawFieldOfView(float _totalAngleOfView, float _radius, float _currentRotationAngle)
     {
         var nbOfVertices = m_nbOfTriangles + 2;
         
@@ -35,6 +35,7 @@ public class FieldOfView : MonoBehaviour
         {
             var direction =
                 Quaternion.Euler(0, (-_totalAngleOfView * .5f) + ((i-1) * angleStep), 0)
+                * Quaternion.Euler(0, _currentRotationAngle, 0)
                 * Vector3.forward;
             
             vertices[i] = direction * _radius;
